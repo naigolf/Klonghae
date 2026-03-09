@@ -1,11 +1,283 @@
 <!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>กำลังปรับปรุง</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-<html>
-   <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-      <base target="_top">
-   </head>
-   <body>
-      <iframe style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;border: 0;" src="https://script.google.com/macros/s/AKfycbxlHghppBHbCutM66LY3YVJeUYcZ2FX3mFywtNsrZfyOl--GHmUrVX4vG5TfN7Hb87DiA/exec"></iframe>
-   </body>
+    :root {
+      --cream: #f5f0e8;
+      --ink: #1a1208;
+      --gold: #c8922a;
+      --rust: #b84c1a;
+      --muted: #8c7a5e;
+    }
+
+    body {
+      background-color: var(--cream);
+      color: var(--ink);
+      font-family: 'Sarabun', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Decorative lines */
+    .lines {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .lines span {
+      position: absolute;
+      background: var(--gold);
+      opacity: 0.12;
+    }
+    .lines span:nth-child(1) { top: 0; left: 18%; width: 1px; height: 100%; }
+    .lines span:nth-child(2) { top: 0; right: 18%; width: 1px; height: 100%; }
+    .lines span:nth-child(3) { top: 38%; left: 0; width: 100%; height: 1px; }
+    .lines span:nth-child(4) { bottom: 28%; left: 0; width: 100%; height: 1px; }
+
+    /* Corner ornaments */
+    .corner {
+      position: fixed;
+      width: 60px;
+      height: 60px;
+      opacity: 0.35;
+      z-index: 1;
+    }
+    .corner svg { width: 100%; height: 100%; }
+    .corner.tl { top: 24px; left: 24px; }
+    .corner.tr { top: 24px; right: 24px; transform: scaleX(-1); }
+    .corner.bl { bottom: 24px; left: 24px; transform: scaleY(-1); }
+    .corner.br { bottom: 24px; right: 24px; transform: scale(-1); }
+
+    /* Main card */
+    .card {
+      position: relative;
+      z-index: 5;
+      text-align: center;
+      max-width: 620px;
+      padding: 0 32px;
+      animation: fadeUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(32px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--rust);
+      font-weight: 700;
+      margin-bottom: 28px;
+      animation: fadeUp 1.2s 0.15s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 28px;
+      animation: fadeUp 1.2s 0.2s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    .divider-line { flex: 1; max-width: 80px; height: 1px; background: var(--gold); opacity: 0.5; }
+    .divider-dot  { width: 6px; height: 6px; background: var(--gold); border-radius: 50%; }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: clamp(2.6rem, 6vw, 4.2rem);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 8px;
+      animation: fadeUp 1.2s 0.25s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    h1 span { color: var(--gold); }
+
+    .subtitle {
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      font-weight: 300;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      margin-bottom: 48px;
+      animation: fadeUp 1.2s 0.35s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    /* Gear animation */
+    .gear-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin: 0 auto 48px;
+      animation: fadeUp 1.2s 0.45s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    .gear {
+      width: 48px;
+      height: 48px;
+      color: var(--gold);
+      opacity: 0.8;
+    }
+    .gear.spin-cw  { animation: spinCW 5s linear infinite; }
+    .gear.spin-ccw { animation: spinCCW 4s linear infinite; margin: 0 -6px; }
+
+    @keyframes spinCW  { to { transform: rotate(360deg);  } }
+    @keyframes spinCCW { to { transform: rotate(-360deg); } }
+
+    /* Progress bar */
+    .progress-wrap {
+      width: 100%;
+      max-width: 360px;
+      margin: 0 auto 20px;
+      animation: fadeUp 1.2s 0.5s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .progress-track {
+      width: 100%;
+      height: 3px;
+      background: rgba(200,146,42,0.15);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--rust), var(--gold));
+      border-radius: 2px;
+      animation: fillBar 3.5s 1s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+    @keyframes fillBar { to { width: 68%; } }
+
+    .note {
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      opacity: 0;
+      animation: fadeUp 1s 4.5s ease both;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Grid lines -->
+  <div class="lines">
+    <span></span><span></span><span></span><span></span>
+  </div>
+
+  <!-- Corner ornaments -->
+  <div class="corner tl">
+    <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 4 L4 28 M4 4 L28 4" stroke="#c8922a" stroke-width="1.5"/>
+      <path d="M4 38 L4 56 M38 4 L56 4" stroke="#c8922a" stroke-width="0.8" opacity="0.5"/>
+      <rect x="10" y="10" width="6" height="6" stroke="#c8922a" stroke-width="1" fill="none"/>
+    </svg>
+  </div>
+  <div class="corner tr">
+    <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 4 L4 28 M4 4 L28 4" stroke="#c8922a" stroke-width="1.5"/>
+      <path d="M4 38 L4 56 M38 4 L56 4" stroke="#c8922a" stroke-width="0.8" opacity="0.5"/>
+      <rect x="10" y="10" width="6" height="6" stroke="#c8922a" stroke-width="1" fill="none"/>
+    </svg>
+  </div>
+  <div class="corner bl">
+    <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 4 L4 28 M4 4 L28 4" stroke="#c8922a" stroke-width="1.5"/>
+      <path d="M4 38 L4 56 M38 4 L56 4" stroke="#c8922a" stroke-width="0.8" opacity="0.5"/>
+      <rect x="10" y="10" width="6" height="6" stroke="#c8922a" stroke-width="1" fill="none"/>
+    </svg>
+  </div>
+  <div class="corner br">
+    <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 4 L4 28 M4 4 L28 4" stroke="#c8922a" stroke-width="1.5"/>
+      <path d="M4 38 L4 56 M38 4 L56 4" stroke="#c8922a" stroke-width="0.8" opacity="0.5"/>
+      <rect x="10" y="10" width="6" height="6" stroke="#c8922a" stroke-width="1" fill="none"/>
+    </svg>
+  </div>
+
+  <!-- Main content -->
+  <div class="card">
+    <p class="eyebrow">Website Maintenance</p>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-dot"></div>
+      <div class="divider-line"></div>
+    </div>
+
+    <h1>กำลัง<span>ปรับปรุง</span><br/>เว็บไซต์</h1>
+    <p class="subtitle">เราขออภัยในความไม่สะดวก — กลับมาพบกันเร็ว ๆ นี้</p>
+
+    <!-- Gears -->
+    <div class="gear-wrap">
+      <svg class="gear spin-cw" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.92c.04-.36.07-.73.07-1.08s-.03-.73-.07-1.08l2.32-1.82c.21-.16.27-.45.14-.68l-2.2-3.82c-.13-.23-.41-.3-.64-.21l-2.73 1.1c-.57-.44-1.18-.8-1.85-1.07L14.07 2.1A.549.549 0 0 0 13.5 1.6h-3c-.3 0-.55.21-.6.5l-.41 2.93c-.67.27-1.28.63-1.85 1.07l-2.73-1.1c-.28-.09-.55-.02-.64.21L2.07 9.03c-.14.23-.07.52.14.68l2.32 1.82c-.04.35-.07.72-.07 1.07s.03.73.07 1.08L2.21 15.5c-.21.17-.27.46-.14.69l2.2 3.82c.13.23.41.3.64.21l2.73-1.1c.57.44 1.18.8 1.85 1.07l.41 2.93c.05.29.3.5.6.5h3c.3 0 .55-.21.6-.5l.41-2.93c.67-.27 1.28-.63 1.85-1.07l2.73 1.1c.28.09.55.02.64-.21l2.2-3.82c.13-.23.07-.52-.14-.68l-2.32-1.82z"/>
+      </svg>
+      <svg class="gear spin-ccw" viewBox="0 0 24 24" fill="currentColor" style="color:var(--rust);width:34px;height:34px;">
+        <path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.92c.04-.36.07-.73.07-1.08s-.03-.73-.07-1.08l2.32-1.82c.21-.16.27-.45.14-.68l-2.2-3.82c-.13-.23-.41-.3-.64-.21l-2.73 1.1c-.57-.44-1.18-.8-1.85-1.07L14.07 2.1A.549.549 0 0 0 13.5 1.6h-3c-.3 0-.55.21-.6.5l-.41 2.93c-.67.27-1.28.63-1.85 1.07l-2.73-1.1c-.28-.09-.55-.02-.64.21L2.07 9.03c-.14.23-.07.52.14.68l2.32 1.82c-.04.35-.07.72-.07 1.07s.03.73.07 1.08L2.21 15.5c-.21.17-.27.46-.14.69l2.2 3.82c.13.23.41.3.64.21l2.73-1.1c.57.44 1.18.8 1.85 1.07l.41 2.93c.05.29.3.5.6.5h3c.3 0 .55-.21.6-.5l.41-2.93c.67-.27 1.28-.63 1.85-1.07l2.73 1.1c.28.09.55.02.64-.21l2.2-3.82c.13-.23.07-.52-.14-.68l-2.32-1.82z"/>
+      </svg>
+      <svg class="gear spin-cw" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.92c.04-.36.07-.73.07-1.08s-.03-.73-.07-1.08l2.32-1.82c.21-.16.27-.45.14-.68l-2.2-3.82c-.13-.23-.41-.3-.64-.21l-2.73 1.1c-.57-.44-1.18-.8-1.85-1.07L14.07 2.1A.549.549 0 0 0 13.5 1.6h-3c-.3 0-.55.21-.6.5l-.41 2.93c-.67.27-1.28.63-1.85 1.07l-2.73-1.1c-.28-.09-.55-.02-.64.21L2.07 9.03c-.14.23-.07.52.14.68l2.32 1.82c-.04.35-.07.72-.07 1.07s.03.73.07 1.08L2.21 15.5c-.21.17-.27.46-.14.69l2.2 3.82c.13.23.41.3.64.21l2.73-1.1c.57.44 1.18.8 1.85 1.07l.41 2.93c.05.29.3.5.6.5h3c.3 0 .55-.21.6-.5l.41-2.93c.67-.27 1.28-.63 1.85-1.07l2.73 1.1c.28.09.55.02.64-.21l2.2-3.82c.13-.23.07-.52-.14-.68l-2.32-1.82z"/>
+      </svg>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>ความคืบหน้า</span>
+        <span id="pct">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="bar"></div>
+      </div>
+    </div>
+
+    <p class="note">ขอบคุณที่รอคอย — เราจะกลับมาเร็ว ๆ นี้</p>
+  </div>
+
+  <script>
+    // Animate percentage counter
+    const pct = document.getElementById('pct');
+    let val = 0, target = 68;
+    setTimeout(() => {
+      const iv = setInterval(() => {
+        if (val >= target) { clearInterval(iv); return; }
+        val++;
+        pct.textContent = val + '%';
+      }, 3500 / target);
+    }, 1000);
+  </script>
+</body>
 </html>
